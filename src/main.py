@@ -13,3 +13,5 @@ for a in polygon_client.list_aggs(ticker=ticker, multiplier=1, timespan="minute"
     aggs.append(a)
 
 print(aggs)
+
+
