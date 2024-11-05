@@ -1,16 +1,8 @@
 from dotenv import load_dotenv
 from polygon import RESTClient
 import os
-import sys
-from pathlib import Path
-
-# Add the email parsing directory to the Python path
-sys.path.append(str(Path(__file__).parent / 'email parsing'))
-from weathsimpleParse import extract_trade_actions # type: ignore
-
-sys.path.append(str(Path(__file__).parent / 'portfolio'))
-from user_portfolio import UserPortfolio # type: ignore
-from trade_position import TradePosition # type: ignore
+from weathsimpleParse import extract_trade_actions 
+from user_portfolio import UserPortfolio
 
 load_dotenv()
 polygon_key = os.getenv("POLYGON_KEY")
@@ -23,10 +15,9 @@ portfolio = UserPortfolio()
 trade_actions = extract_trade_actions(os.getenv('TRADE_EMAIL_PATH'))
 
 # Process each trade action
-for trade in trade_actions:
+for trade in sorted(trade_actions, key=lambda x: x.time):
+    print(trade)
     portfolio.add_trade(trade)
 
 # Print the portfolio
 print(portfolio)
-
-
