@@ -74,9 +74,9 @@ class TradeAction:
         :return: Parsed datetime object or original string if parsing fails.
         """
         try:
-            return datetime.strptime(time_str, "%B %d, %Y %H:%M %Z")
+            return datetime.strptime(time_str, "%B %d, %Y %I:%M %p EDT")
         except ValueError:
-            return time_str  # Return the original string if parsing fails
+            return datetime.strptime(time_str, "%B %d, %Y %H:%M EDT")
 
     def __str__(self):
         """

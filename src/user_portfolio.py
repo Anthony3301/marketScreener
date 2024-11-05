@@ -15,8 +15,8 @@ class UserPortfolio:
             self.total_value -= trade.total_value
             self.positions[trade.symbol] -= trade.shares
             
-        if self.positions[trade.symbol] == 0:
-            self.positions.pop(trade.symbol)
+            if self.positions[trade.symbol] == 0:
+                self.positions.pop(trade.symbol)
     
     def __str__(self):
         if not self.positions:
