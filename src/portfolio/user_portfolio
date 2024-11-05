@@ -1,0 +1,38 @@
+from collections import defaultdict
+from trade_position import TradePosition # type: ignore
+from trade_action import TradeAction # type: ignore
+
+class UserPortfolio:
+    def __init__(self):
+        self.positions = defaultdict(TradePosition)
+        self.total_value = 0.0
+    
+    def add_trade(self, trade: TradeAction):
+        self.positions[trade.symbol] += trade.shares
+        if trade.is_buy():
+            self.total_value += trade.total_cost
+        else:
+            self.total_value += trade.total_value
+    
+    def remove_trade(self, trade: TradeAction):
+        self.positions[trade.symbol] -= trade.shares
+        if trade.is_buy():
+            self.total_value -= trade.total_cost
+        else:
+            self.total_value -= trade.total_value
+    
+    def __str__(self):
+        if not self.positions:
+            return "Portfolio is empty"
+        
+        output = "Current Portfolio:\n"
+        output += "================\n"
+        for symbol, position in self.positions.items():
+            output += f"{symbol}: {position.shares} shares\n"
+        output += f"\nTotal Portfolio Value: ${self.total_value:.2f}"
+        return output
+    
+    def __repr__(self):
+        return f"UserPortfolio(positions={dict(self.positions)})"
+    
+    

@@ -9,7 +9,7 @@ class TradeAction:
         :param raw_text: The raw string containing trade details.
         """
         # Custom parsing to extract trade details from the raw text
-        self.trade_type = self._parse_field(raw_text, r"Type:\s\*(.*?)\*")
+        self.trade_type = self._parse_trade_type(raw_text)
         self.symbol = self._parse_field(raw_text, r"Symbol:\s\*(.*?)\*")
         
         # Parse shares as integer
@@ -20,7 +20,7 @@ class TradeAction:
         avg_price_str = self._parse_currency_field(raw_text, r"Average price:\s\*\$?(US|USD\$)?\s?(.*?)\*")
         self.avg_price = float(avg_price_str) if avg_price_str else None
         
-        # Check for "Total cost" (buy) or "Total value" (sell), handle optional "US" or "US$" prefix and commas
+        # Check for "Total cost" (buy) or "Total value" (sell), handle optional "US" or "USD$" prefix and commas
         total_cost_str = self._parse_currency_field(raw_text, r"Total cost:\s\*\$?(US|USD\$)?\s?(.*?)\*")
         total_value_str = self._parse_currency_field(raw_text, r"Total value:\s\*\$?(US|USD\$)?\s?(.*?)\*")
         
@@ -56,6 +56,16 @@ class TradeAction:
             return match.group(2).replace(',', '').replace('$', '').strip()
         return None
 
+    def _parse_trade_type(self, text):
+        """
+        Extracts the action type (Buy or Sell) from the Type field in raw text.
+
+        :param text: The raw text to search.
+        :return: 'Buy' or 'Sell' if found; otherwise, None.
+        """
+        match = re.search(r"Type:\s\*Market\*\s\*(Buy|Sell)\*", text, re.IGNORECASE)
+        return match.group(1) if match else None
+
     def _parse_time(self, time_str):
         """
         Convert time string to datetime object.
@@ -66,13 +76,13 @@ class TradeAction:
         try:
             return datetime.strptime(time_str, "%B %d, %Y %H:%M %Z")
         except ValueError:
-            return time_str 
+            return time_str  # Return the original string if parsing fails
 
     def __str__(self):
         """
         Returns a string representation of the trade details.
         """
-        return (f"Trade Action - Type: {self.trade_type}\n"
+        return (f"Trade Action: {self.trade_type}\n"
                 f"Symbol: {self.symbol}\n"
                 f"Shares: {self.shares}\n"
                 f"Average Price: ${self.avg_price}\n"
@@ -90,10 +100,10 @@ class TradeAction:
         """
         Check if the trade is a buy action.
         """
-        return 'buy' in self.trade_type.lower() if self.trade_type else False
+        return self.trade_type.lower() == 'buy' if self.trade_type else False
 
     def is_sell(self):
         """
         Check if the trade is a sell action.
         """
-        return 'sell' in self.trade_type.lower() if self.trade_type else False
+        return self.trade_type.lower() == 'sell' if self.trade_type else False

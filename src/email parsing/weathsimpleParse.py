@@ -11,9 +11,6 @@ def extract_trade_actions(mbox_file_path):
     :param mbox_file_path: Path to the mbox file.
     :return: List of TradeAction objects parsed from the file.
     """
-    mbox_file_path = os.getenv('TRADE_EMAIL_PATH')
-    trade_actions = extract_trade_actions(mbox_file_path)
-    
     start_pattern = r"Your order has been filled Account"
     end_pattern = r"\*\* \(  \)"
 
@@ -29,3 +26,9 @@ def extract_trade_actions(mbox_file_path):
         trade_actions.append(TradeAction(content))
 
     return trade_actions
+
+if __name__ == "__main__":
+    mbox_file_path = os.getenv('TRADE_EMAIL_PATH')
+    trade_actions = extract_trade_actions(mbox_file_path)
+    for action in trade_actions:
+        print(action)
