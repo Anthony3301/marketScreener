@@ -16,7 +16,7 @@ trade_actions = extract_trade_actions(os.getenv('TRADE_EMAIL_PATH'))
 
 # Process each trade action
 for trade in sorted(trade_actions, key=lambda x: x.time):
-    print(trade)
+    #print(trade)
     portfolio.add_trade(trade)
 
 # Print the portfolio
